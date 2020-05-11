@@ -1,0 +1,44 @@
+#!/usr/bin/env perl
+
+use warnings;
+use strict;
+
+my $dir = $ARGV[0];
+
+opendir(DH, $dir);
+my @files = readdir(DH);
+@files = sort @files;
+closedir(DH);
+
+system "mkdir -p '$dir/res'";
+
+my $out = "$dir/out.tex";
+open(my $FH, ">", $out);
+print $FH <<END;
+\\documentclass{article}
+\\usepackage{graphicx}
+\\usepackage{geometry}
+\\geometry{a4paper,left=0mm,right=0mm,top=0mm,bottom=0mm}
+\\begin{document}
+END
+
+
+foreach my $file (@files) {
+    # skip . and ..
+    next if($file =~ /^\.$/);
+    next if($file =~ /^\.\.$/);
+    next unless ($file =~ /^.*\.(jpg|png)/);
+    system("python3 py.py $dir/$file $dir/res/$file");
+print $FH <<END;
+\\noindent
+\\includegraphics[width=\\paperwidth]{res/$file}
+END
+}
+
+
+print $FH <<END;
+\\end{document}
+END
+
+system("cd $dir; pdflatex out.tex; zathura out.pdf");
+
