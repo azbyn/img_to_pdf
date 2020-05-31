@@ -28,7 +28,7 @@ foreach my $file (@files) {
     next if($file =~ /^\.$/);
     next if($file =~ /^\.\.$/);
     next unless ($file =~ /^.*\.(jpg|png)/);
-    system("python3 edit_img.py $dir/$file $dir/res/$file");
+    system("python3 py.py $dir/$file $dir/res/$file");
 print $FH <<END;
 \\noindent
 \\includegraphics[width=\\paperwidth]{res/$file}
