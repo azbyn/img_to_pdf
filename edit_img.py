@@ -10,15 +10,33 @@ def imshow(img, cmap='gray'):
 path = 'p2.jpg' if len(argv) < 2 else argv[1]
 out_path = 'res.p2.jpg' if len(argv) < 3 else argv[2]
 img = cv2.imread(path)
+
+h, w = img.shape[:2]
+if w > h:
+    # Perform the counter clockwise rotation holding at the center
+    # 90 degrees
+    #print("ROTATE");
+    #center = 
+    #M = cv2.getRotationMatrix2D( center, 270, 1.0)
+    #img = cv2.warpAffine(img, M, (h, w))
+
+    img = cv2.transpose(img)
+    img = cv2.flip(img, 0)
+    h, w = img.shape[:2]
+
+    #imshow(img)
+    h, w = img.shape[:2]
+#imshow(img)
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 blurred = cv2.medianBlur(gray, 9)
+
 
 canny = cv2.Canny(blurred, 10, 20, 3)
 
 dil = cv2.dilate(canny, None)
 res = dil
 contours, hierarchy = cv2.findContours(res, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-max_approx = []
+max_approx = []# [[0,0], [w, 0], [w, h], [0, h]]
 max_area = 0
 for c in contours:
     eps = 0.02 * cv2.arcLength(c, True)
@@ -28,7 +46,6 @@ for c in contours:
         max_approx = approx
         max_area = area
 
-h, w = img.shape[:2]
 
 out_width = 1000
 out_height = out_width * sqrt(2)
@@ -59,14 +76,14 @@ def sortCW(arr):
                 arr[j][0] = x
                 arr[j][1] = y
     angleCloseEnough = 15 * pi / 180
-    if pi + minAngle < angleCloseEnough:
-        #0 1 2 3 becomes 1 2 3 0
-        tempx = arr[0][0]
-        tempy = arr[0][1]
-        for i in range(4):
-            points[i] = arr[i+1]
-        arr[3][0] = tempx
-        arr[3][1] = tempy
+    #if pi + minAngle < angleCloseEnough:
+    #    #0 1 2 3 becomes 1 2 3 0
+    #    tempx = arr[0][0]
+    #    tempy = arr[0][1]
+    #    for i in range(4):
+    #        arr[i] = arr[(i+1) % 4]
+    #    arr[3][0] = tempx
+    #    arr[3][1] = tempy
 
     return arr
 
